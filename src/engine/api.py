@@ -143,8 +143,10 @@ def trigger_simulation_burst(scenario: str = "memory_leak"):
     """
     Triggers simulated raw alert burst for testing.
     """
+    # pyrefly: ignore [missing-import]
     from src.simulator import AlertSimulator
-    sim = AlertSimulator("http://localhost:8000")
+    endpoint = os.getenv("API_ENDPOINT", None)
+    sim = AlertSimulator(endpoint)
     count, inc_id = sim.run_scenario(scenario)
     
     # Process incident immediately if produced
@@ -167,7 +169,9 @@ def trigger_simulation_burst(scenario: str = "memory_leak"):
 # SENTRIAI ENDPOINTS
 # ==========================================
 
+# pyrefly: ignore [missing-import]
 from src.engine.router import SentriAIRouter, MODEL_CATALOG, RedisPromptCache
+# pyrefly: ignore [missing-import]
 from src.engine.llm_tiering import SentriAIEngine
 
 shared_sentri_cache = RedisPromptCache(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
