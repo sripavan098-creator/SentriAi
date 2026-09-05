@@ -1,0 +1,40 @@
+{
+  "known_incident_vectors": [
+    {
+      "id": "VEC_MEM_LEAK_01",
+      "name": "Standard Container Memory Leak",
+      "description": "Continuous Out-Of-Memory OOMKilled events or memory heap growth over 95% in payment service container",
+      "vector_keywords": ["oomkilled", "memory leak", "heap allocation failed", "container killed", "high memory usage", "cgroup out of memory"],
+      "remediation_key": "ACTION_RESTART_CONTAINER",
+      "target_container": "mock-nginx-prod",
+      "typical_complexity": 0.25
+    },
+    {
+      "id": "VEC_REDIS_CACHE_01",
+      "name": "Stale Cache Memory Saturation",
+      "description": "Redis maxmemory limit reached resulting in OOM command errors and elevated read latency across payment gateway",
+      "vector_keywords": ["redis maxmemory", "oom command not allowed", "cache saturation", "redis memory spike", "eviction policy failed"],
+      "remediation_key": "ACTION_FLUSH_REDIS_CACHE",
+      "target_container": "aiops-redis",
+      "typical_complexity": 0.35
+    },
+    {
+      "id": "VEC_SCALE_SERVICE_01",
+      "name": "Traffic Spike Queue Congestion",
+      "description": "HTTP 503 Service Unavailable with worker pool saturation and pending connection queue overflow under high RPS load",
+      "vector_keywords": ["worker pool exhausted", "503 service unavailable", "high rps spike", "connection queue backlog", "scale required"],
+      "remediation_key": "ACTION_SCALE_SERVICE",
+      "target_container": "payment-api",
+      "typical_complexity": 0.45
+    },
+    {
+      "id": "VEC_COMPLEX_CASCADING_01",
+      "name": "Cascading Distributed Deadlock & Network Partition",
+      "description": "Cross-region database deadlock accompanied by corrupt TLS handshake timeouts, BGP route flap, and simultaneous thread dump across microservices",
+      "vector_keywords": ["distributed deadlock", "corrupt tls handshake", "bgp route flap", "kernel panic", "cascading microservice failure", "split brain"],
+      "remediation_key": "ACTION_NO_OP",
+      "target_container": "cluster-wide",
+      "typical_complexity": 0.92
+    }
+  ]
+}

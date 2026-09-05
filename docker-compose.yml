@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: aiops-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  nginx-target:
+    image: nginx:alpine
+    container_name: mock-nginx-prod
+    ports:
+      - "8080:80"
+    restart: always
+
+  fastapi-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aiops-fastapi-engine
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DB_PATH=/app/data/audit_log.db
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  streamlit-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: aiops-dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - API_ENDPOINT=http://fastapi-engine:8000
+    depends_on:
+      - fastapi-engine
