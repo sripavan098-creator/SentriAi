@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.engine.api import app
+from src.engine.api import app as fastapi_app
 from src.engine.research_analytics import (
     DowntimeFinancialRiskPredictor,
     RogueExecutionSafetyGuard,
@@ -13,7 +13,7 @@ from src.engine.research_analytics import (
     TokenEconomicsCalculator
 )
 
-client = TestClient(app)
+client = TestClient(fastapi_app)
 
 def test_downtime_financial_risk_predictor():
     pred = DowntimeFinancialRiskPredictor.predict_risk("INC-TEST-10M", duration_minutes=10.0)
