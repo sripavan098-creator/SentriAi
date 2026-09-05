@@ -1,5 +1,6 @@
 import os
 import time
+import json
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
@@ -280,5 +281,52 @@ def openai_chat_completions(req: OpenAICompletionRequest):
             "cache_hit": decision.cache_hit
         }
     }
+
+
+# ==========================================
+# RESEARCH ANALYTICS & SAFETY ENDPOINTS
+# ==========================================
+
+from src.engine.research_analytics import (
+    DowntimeFinancialRiskPredictor,
+    RogueExecutionSafetyGuard,
+    AlertFatigueAnalyzer,
+    TokenEconomicsCalculator
+)
+
+class RiskPredictionRequest(BaseModel):
+    incident_id: str = "INC-EXPOSURE-DEMO"
+    duration_minutes: float = 15.0
+
+class SafetyVerifyRequest(BaseModel):
+    action_key: str = "ACTION_RESTART_CONTAINER"
+    target_name: str = "payment-api"
+    human_approved: bool = False
+
+@app.get("/api/sentri/research_brief")
+def get_research_brief_endpoint():
+    brief_path = os.path.abspath("data/research_brief.json")
+    if os.path.exists(brief_path):
+        with open(brief_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    raise HTTPException(status_code=404, detail="Research brief dataset not found.")
+
+@app.post("/api/sentri/predict_downtime_risk")
+def predict_downtime_risk_endpoint(req: RiskPredictionRequest):
+    return DowntimeFinancialRiskPredictor.predict_risk(req.incident_id, req.duration_minutes).model_dump()
+
+@app.post("/api/sentri/verify_remediation_safety")
+def verify_remediation_safety_endpoint(req: SafetyVerifyRequest):
+    cert = RogueExecutionSafetyGuard.audit_remediation_action(req.action_key, req.target_name, req.human_approved)
+    return cert.model_dump()
+
+@app.get("/api/sentri/alert_fatigue_analytics")
+def get_alert_fatigue_analytics_endpoint(raw_count: int = 25, correlated_count: int = 3):
+    return AlertFatigueAnalyzer.analyze_noise(raw_count, correlated_count).model_dump()
+
+@app.get("/api/sentri/token_economics")
+def get_token_economics_endpoint(input_tokens: int = 1500, output_tokens: int = 400, cache_hit: bool = False):
+    return TokenEconomicsCalculator.calculate_savings(input_tokens, output_tokens, cache_hit).model_dump()
+
 
 

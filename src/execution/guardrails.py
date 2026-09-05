@@ -6,6 +6,7 @@ class AllowedRemediationAction(str, Enum):
     ACTION_RESTART_CONTAINER = "ACTION_RESTART_CONTAINER"
     ACTION_FLUSH_REDIS_CACHE = "ACTION_FLUSH_REDIS_CACHE"
     ACTION_SCALE_SERVICE = "ACTION_SCALE_SERVICE"
+    ACTION_ROLLBACK = "ACTION_ROLLBACK"
     ACTION_NO_OP = "ACTION_NO_OP"
 
 class GuardrailViolationError(Exception):
@@ -15,6 +16,18 @@ class GuardrailViolationError(Exception):
 class ActionGuardrailController:
     ALLOWED_ACTIONS = {action.value for action in AllowedRemediationAction}
     SAFE_TARGET_REGEX = re.compile(r"^[a-zA-Z0-9_\-\.]{2,64}$")
+
+    ACTION_RISK_MAP = {
+        AllowedRemediationAction.ACTION_RESTART_CONTAINER: "LOW_RISK",
+        AllowedRemediationAction.ACTION_FLUSH_REDIS_CACHE: "LOW_RISK",
+        AllowedRemediationAction.ACTION_SCALE_SERVICE: "HIGH_BLAST_RADIUS",
+        AllowedRemediationAction.ACTION_ROLLBACK: "HIGH_BLAST_RADIUS",
+        AllowedRemediationAction.ACTION_NO_OP: "LOW_RISK",
+    }
+
+    @classmethod
+    def get_risk_level(cls, remediation_key: str) -> str:
+        return cls.ACTION_RISK_MAP.get(remediation_key, "HIGH_BLAST_RADIUS")
 
     @classmethod
     def validate_action(cls, remediation_key: str, target_name: str) -> Tuple[bool, str]:
@@ -40,3 +53,4 @@ class ActionGuardrailController:
                 raise GuardrailViolationError(msg)
 
         return True, f"GUARDRAIL PASSED: Action '{remediation_key}' on target '{target_name}' is verified safe."
+

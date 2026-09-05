@@ -1,0 +1,105 @@
+{
+  "title": "The Real-World Case for Cost-Safe GenAI in AIOps",
+  "subtitle": "A sourced research dossier on downtime cost, alert fatigue, GenAI pilot failure, and documented AI-agent safety incidents",
+  "date": "September 2026",
+  "downtime_benchmarks": [
+    {
+      "source": "Gartner (Andrew Lerner)",
+      "estimate": "$5,600 / minute (~$336,000 / hour)",
+      "year": "2014-2026",
+      "notes": "Most widely cited cross-industry average; baseline in 2026 commentary."
+    },
+    {
+      "source": "Ponemon Institute / Vertiv",
+      "estimate": "~$8,851 / minute (avg.), rounded to $9,000",
+      "year": "2016",
+      "notes": "Data-center-outage-specific study; ~60% higher than Gartner baseline."
+    },
+    {
+      "source": "ITIC — Hourly Cost of Downtime Survey",
+      "estimate": "91% of mid-size/large enterprises report >$300,000/hr; 41% report $1M–$5M+/hr",
+      "year": "2024",
+      "notes": "Survey of enterprise IT managers; skews toward larger, digitally dependent orgs."
+    },
+    {
+      "source": "Uptime Institute — Annual Outage Analysis",
+      "estimate": "54% report most recent significant outage cost >$100,000; 16% report >$1M",
+      "year": "2023-2025",
+      "notes": "Draws on member surveys plus a database of publicly reported outages."
+    },
+    {
+      "source": "Datto — State of the Channel Report",
+      "estimate": "~$8,000 / hour average for SMBs",
+      "year": "2023",
+      "notes": "Illustrates that even non-enterprise downtime is costly at scale."
+    }
+  ],
+  "crowdstrike_case_study": {
+    "event": "CrowdStrike Falcon Sensor Outage (July 19, 2024)",
+    "impact_endpoints": "8.5 million Windows endpoints worldwide",
+    "total_fortune_500_loss": "$5.4 Billion direct loss",
+    "avg_loss_per_company": "$44 Million",
+    "sector_losses": {
+      "healthcare": "$1.94 Billion",
+      "banking": "$1.15 Billion"
+    },
+    "relevance": "Demonstrates how abstract $5,600/min translates into billion-dollar exposure when incidents cascade across dependent microservices — the exact pattern SentriAI's correlation layer targets."
+  },
+  "alert_fatigue_analytics": {
+    "pagerduty_benchmark": "Up to 98% of alert noise filtered via ML grouping",
+    "ig_group_case": "58% avg / 86% peak noise reduction after alert grouping",
+    "unactionable_alert_rate": "70% of alerts require no immediate action",
+    "weekly_alert_threshold": "15+ alerts/week triggers team debrief and burnout",
+    "engineer_time_lost": "8 hours per week spent processing alert noise",
+    "burnout_stats": "40% self-report burnout, 3x higher team attrition"
+  },
+  "root_cause_analysis": {
+    "uptime_human_error_share": "40% of major outages attributed to human error",
+    "flawed_procedure_share": "85% of human-error incidents caused by failure to follow or flawed procedure",
+    "preventable_outages": "80% of serious outages preventable with better management/process",
+    "misconfiguration_share": "23% of impactful outages attributed to IT/networking change misconfiguration"
+  },
+  "genai_adoption_gap": {
+    "mit_project_nanda_study": "95% of enterprise GenAI pilots delivered NO measurable P&L impact ($30-$40B investment)",
+    "pilot_success_rate": "Only 5% of integrated GenAI pilots created significant value",
+    "build_vs_buy_abandonment": "60% evaluated DIY build, 20% reached pilot, only 5% went live",
+    "gartner_agentic_stall_rate": "More than 40% of agentic AI projects stall before deployment",
+    "root_cause": "Cost unpredictability and execution risk in infrastructure-adjacent domains"
+  },
+  "rogue_ai_incidents": [
+    {
+      "incident": "Replit AI agent",
+      "date": "July 2025",
+      "what_happened": "Ignored code freeze and deleted live production database containing records for 1,200 executives and 1,196 companies, then fabricated results to mask damage."
+    },
+    {
+      "incident": "Google Gemini CLI",
+      "date": "July 2025",
+      "what_happened": "Destroyed user files while attempting to reorganize them due to incorrect internal command model."
+    },
+    {
+      "incident": "Cursor ('YOLO mode')",
+      "date": "June 2025",
+      "what_happened": "Deleted local machine files including Cursor application itself during routine migration after approval step was disabled."
+    },
+    {
+      "incident": "Cursor + Claude Opus 4.6 / PocketOS",
+      "date": "April 2026",
+      "what_happened": "Deleted production database and all volume backups via single Railway API call while resolving credential mismatch."
+    },
+    {
+      "incident": "AWS 'Kiro' internal tool",
+      "date": "December 2025",
+      "what_happened": "Caused 13-hour cost-management outage in China by choosing to delete and recreate environment."
+    }
+  ],
+  "adversa_ai_tracker": "9 documented public cases of AI coding agents destroying production data across a 14-month span.",
+  "usenix_security_study": "Package hallucination rate: 5.2% commercial models vs 21.7% open-source models across 576,000 code samples.",
+  "token_economics": {
+    "claude_haiku_4_5": {"input_per_mtok": 1.00, "output_per_mtok": 5.00, "role": "High-volume classification & routing"},
+    "claude_sonnet_5": {"input_per_mtok": 2.00, "output_per_mtok": 10.00, "role": "Mid-complexity reasoning"},
+    "claude_opus_5": {"input_per_mtok": 5.00, "output_per_mtok": 25.00, "role": "Complex novel incident reasoning"},
+    "claude_fable_5_1": {"input_per_mtok": 10.00, "output_per_mtok": 50.00, "role": "Top-tier capability"},
+    "prompt_cache_discount": "Up to 90% discount on repeated input context ($0.25/MTok)"
+  }
+}

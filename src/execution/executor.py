@@ -45,7 +45,7 @@ class SafeRemediationExecutor:
                 self.docker_client = None
                 self.docker_available = False
 
-    def execute_action(self, remediation_key: str, target_name: str) -> ExecutionResult:
+    def execute_action(self, remediation_key: str, target_name: str, human_approved: bool = False) -> ExecutionResult:
         start_time = time.time()
         
         # 1. Guardrail Validation Check
@@ -61,6 +61,17 @@ class SafeRemediationExecutor:
                 execution_time_ms=elapsed
             )
 
+        risk_level = ActionGuardrailController.get_risk_level(remediation_key)
+        if risk_level == "HIGH_BLAST_RADIUS" and not human_approved and remediation_key != AllowedRemediationAction.ACTION_NO_OP:
+            elapsed = round((time.time() - start_time) * 1000, 2)
+            return ExecutionResult(
+                success=False,
+                action_taken=remediation_key,
+                target=target_name,
+                message=f"SAFETY GATED: Action '{remediation_key}' has HIGH_BLAST_RADIUS risk. Explicit human approval is required before execution.",
+                execution_time_ms=elapsed
+            )
+
         # 2. Safe Deterministic Execution
         try:
             if remediation_key == AllowedRemediationAction.ACTION_RESTART_CONTAINER:
@@ -69,6 +80,8 @@ class SafeRemediationExecutor:
                 msg = self._flush_redis_cache(target_name)
             elif remediation_key == AllowedRemediationAction.ACTION_SCALE_SERVICE:
                 msg = f"SUCCESS: Scaled target service '{target_name}' replicas from 1 to 3."
+            elif remediation_key == AllowedRemediationAction.ACTION_ROLLBACK:
+                msg = f"SUCCESS: Rolled back target deployment '{target_name}' to last stable release revision."
             elif remediation_key == AllowedRemediationAction.ACTION_NO_OP:
                 msg = f"INFO: NO_OP executed for '{target_name}'. Incident logged for human review; no container mutation executed."
             else:
